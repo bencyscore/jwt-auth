@@ -91,7 +91,7 @@ class Lcobucci extends Provider implements JWT
                 ->getToken($this->config->signer(), $this->config->signingKey())
                 ->toString();
         } catch (Exception $e) {
-            throw new JWTException('Could not create token: '.$e->getMessage(), $e->getCode(), $e);
+            throw new JWTException('Could not create token: ' . $e->getMessage(), $e->getCode(), $e);
         }
     }
 
@@ -109,10 +109,10 @@ class Lcobucci extends Provider implements JWT
             /** @var \Lcobucci\JWT\Token\Plain */
             $token = $this->config->parser()->parse($token);
         } catch (Exception $e) {
-            throw new TokenInvalidException('Could not decode token: '.$e->getMessage(), $e->getCode(), $e);
+            throw new TokenInvalidException('Could not decode token: ' . $e->getMessage(), $e->getCode(), $e);
         }
 
-        if (! $this->config->validator()->validate($token, ...$this->config->validationConstraints())) {
+        if (!$this->config->validator()->validate($token, ...$this->config->validationConstraints())) {
             throw new TokenInvalidException('Token Signature could not be verified.');
         }
 
@@ -142,28 +142,28 @@ class Lcobucci extends Provider implements JWT
         foreach ($payload as $key => $value) {
             switch ($key) {
                 case RegisteredClaims::ID:
-                    $builder->identifiedBy($value);
+                    $builder = $builder->identifiedBy($value);
                     break;
                 case RegisteredClaims::EXPIRATION_TIME:
-                    $builder->expiresAt(DateTimeImmutable::createFromFormat('U', $value));
+                    $builder = $builder->expiresAt(DateTimeImmutable::createFromFormat('U', $value));
                     break;
                 case RegisteredClaims::NOT_BEFORE:
-                    $builder->canOnlyBeUsedAfter(DateTimeImmutable::createFromFormat('U', $value));
+                    $builder = $builder->canOnlyBeUsedAfter(DateTimeImmutable::createFromFormat('U', $value));
                     break;
                 case RegisteredClaims::ISSUED_AT:
-                    $builder->issuedAt(DateTimeImmutable::createFromFormat('U', $value));
+                    $builder = $builder->issuedAt(DateTimeImmutable::createFromFormat('U', $value));
                     break;
                 case RegisteredClaims::ISSUER:
-                    $builder->issuedBy($value);
+                    $builder = $builder->issuedBy($value);
                     break;
                 case RegisteredClaims::AUDIENCE:
-                    $builder->permittedFor($value);
+                    $builder = $builder->permittedFor($value);
                     break;
                 case RegisteredClaims::SUBJECT:
-                    $builder->relatedTo($value);
+                    $builder = $builder->relatedTo($value);
                     break;
                 default:
-                    $builder->withClaim($key, $value);
+                    $builder = $builder->withClaim($key, $value);
             }
         }
 
@@ -201,7 +201,7 @@ class Lcobucci extends Provider implements JWT
      */
     protected function getSigner()
     {
-        if (! array_key_exists($this->algo, $this->signers)) {
+        if (!array_key_exists($this->algo, $this->signers)) {
             throw new JWTException('The given algorithm could not be found');
         }
 
@@ -233,14 +233,14 @@ class Lcobucci extends Provider implements JWT
     protected function getSigningKey()
     {
         if ($this->isAsymmetric()) {
-            if (! $privateKey = $this->getPrivateKey()) {
+            if (!$privateKey = $this->getPrivateKey()) {
                 throw new JWTException('Private key is not set.');
             }
 
             return $this->getKey($privateKey, $this->getPassphrase() ?? '');
         }
 
-        if (! $secret = $this->getSecret()) {
+        if (!$secret = $this->getSecret()) {
             throw new JWTException('Secret is not set.');
         }
 
@@ -257,14 +257,14 @@ class Lcobucci extends Provider implements JWT
     protected function getVerificationKey()
     {
         if ($this->isAsymmetric()) {
-            if (! $public = $this->getPublicKey()) {
+            if (!$public = $this->getPublicKey()) {
                 throw new JWTException('Public key is not set.');
             }
 
             return $this->getKey($public);
         }
 
-        if (! $secret = $this->getSecret()) {
+        if (!$secret = $this->getSecret()) {
             throw new JWTException('Secret is not set.');
         }
 
